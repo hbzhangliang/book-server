@@ -46,7 +46,8 @@ public class JSONHelper {
         httpURLConnection.setDoOutput(true);
         // 接收返回结果
         InputStream is = httpURLConnection.getInputStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(is, "utf8"));
+//        BufferedReader br = new BufferedReader(new InputStreamReader(is, "utf8"));
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, "gb2312"));
         while (br.read() != -1) {
             sb.append(br.readLine());
         }
