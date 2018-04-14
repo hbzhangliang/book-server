@@ -113,7 +113,7 @@ public class HtmlUtils {
         int startPosition=htmlContent.indexOf(">p>")+3,endPosition=htmlContent.indexOf("</p>");
 
         if(startPosition!=-1&&endPosition!=-1&&startPosition<endPosition)
-            return htmlContent.substring(startPosition,endPosition);
+            return htmlContent.substring(startPosition,endPosition).replace("<br />br />","<br/>");
         return null;
     }
 
