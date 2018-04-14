@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:redis="http://www.springframework.org/schema/redis"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/redis
+        http://www.springframework.org/schema/redis/spring-redis.xsd http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+        <context:property-placeholder location="classpath:spring/config.properties"/>
+        <!-- Redis Config -->
+        <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+              p:host-name="${redis.host}"
+              p:port="${redis.port:6379}"
+              p:password="${redis.password:}"
+              p:database="${redis.database:0}" />
+                <!-- String tpl -->
+        <bean class="org.springframework.data.redis.core.StringRedisTemplate">
+        <constructor-arg ref="redisConnectionFactory" />
+        </bean>
+                <!-- Object tpl -->
+        <bean class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="redisConnectionFactory" />
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
+        </property>
+        <property name="hashValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
+        </property>
+        </bean>
+
+
+
+
+
+
+        <!--mongodb config-->
+        <!-- Mongo Db Config -->
+        <mongo:mongo-client id="mongoDbClient"
+                            replica-set="${mongodb.replica.set.address}"
+                            credentials="${mongodb.credentials:}">
+        <mongo:client-options connections-per-host="32"
+                              threads-allowed-to-block-for-connection-multiplier="16" />
+        </mongo:mongo-client>
+        <mongo:db-factory id="mongoDbFactory"
+                          mongo-ref="mongoDbClient"
+                          dbname="${mongodb.database}" />
+
+        <bean id="mongoDbConverter" class="org.springframework.data.mongodb.core.convert.MappingMongoConverter">
+        <constructor-arg>
+            <bean class="org.springframework.data.mongodb.core.convert.DefaultDbRefResolver">
+                <constructor-arg ref="mongoDbFactory" />
+            </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="org.springframework.data.mongodb.core.mapping.MongoMappingContext" />
+        </constructor-arg>
+        <property name="typeMapper">
+            <bean class="org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper">
+                <constructor-arg>
+                    <null />
+                </constructor-arg>
+            </bean>
+        </property>
+        </bean>
+
+        <mongo:template db-factory-ref="mongoDbFactory" converter-ref="mongoDbConverter" />
+        <mongo:gridFsTemplate db-factory-ref="mongoDbFactory"
+                              converter-ref="mongoDbConverter" bucket="fs" />
+
+
+
+        <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="url" value="${db.url}" />
+        <property name="username" value="${db.user}" />
+        <property name="password" value="${db.password}" />
+        <!-- 连接池最大数量 -->
+        <property name="maxActive" value="${mysql.maxActive}" />
+        <!-- 连接池最大空闲 -->
+        <property name="initialSize" value="${mysql.initialSize}" />
+        <!-- 连接池最小空闲 -->
+        <property name="minIdle" value="${mysql.minIdle}" />
+        <!-- 获取连接最大等待时间 -->
+        <property name="maxWait" value="${mysql.maxWait}" />
+        </bean>
+                <!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+        <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+                <property name="dataSource" ref="dataSource" />
+                <!-- 自动扫描mapping.xml文件，**表示迭代查找 -->
+                <property name="mapperLocations" value="classpath:mappers/*.xml" />
+        </bean>
+                <!-- DAO接口所在包名，Spring会自动查找其下的类 ,包下的类需要使用@MapperScan注解,否则容器注入会失败 -->
+        <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="cn.com.flaginfo.platform.terminal.mysql.mapper" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+        </bean>
+                <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+        <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+        </bean>
+                <!--通过后缀为Tx ,添加事务机制  cn.com.flaginfo包的所有子包 下面的以Impl结尾的类中的 以Tx结尾的所有方法-->
+        <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*Tx" timeout="60" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+        </tx:attributes>
+        </tx:advice>
+        <aop:config>
+        <aop:advisor pointcut="execution(* cn.com.flaginfo..*Impl.*Tx(..))" advice-ref="txAdvice" />
+        </aop:config>
+
+
+
+
+        <!--线程池配置-->
+        <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+                <!-- 核心线程数  -->
+                <property name="corePoolSize" value="20" />
+                <!-- 最大线程数 -->
+                <property name="maxPoolSize" value="100" />
+                <!-- 队列最大长度 >=mainExecutor.maxSize -->
+                <property name="queueCapacity" value="1000" />
+                <!-- 队列最大长度 >=mainExecutor.maxSize -->
+                <property name="keepAliveSeconds" value="300" />
+                <!-- 线程池对拒绝任务(无线程可用)的处理策略 -->
+                <property name="rejectedExecutionHandler">
+                        <bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
+                </property>
+        </bean>
+
+
+
+</beans>
