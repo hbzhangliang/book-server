@@ -5,6 +5,10 @@ import cn.com.flaginfo.platform.terminal.utils.JSONHelper;
 
 public class Test002 {
 
+    /**
+     * 章节内容
+     * @param args
+     */
     public static void main(String[] args){
 
         try{

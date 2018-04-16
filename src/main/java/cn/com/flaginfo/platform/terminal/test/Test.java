@@ -14,9 +14,18 @@ import java.util.Map;
 public class Test {
 
 
+    /**
+     * 作家 文章 列表
+     * @param args
+     */
     public static void main(String[] args){
 
         try {
+//            String strUrl="http://love.kanunu8.com/author/yishu.html";
+//            需要解析
+//            String strUrl="http://www.kanunu8.com/files/writer/4461.html";
+//            需要解析
+//、
             String strUrl = "http://www.kanunu8.com/zj/10867.html";
             String content = JSONHelper.loadJson(strUrl);
 
