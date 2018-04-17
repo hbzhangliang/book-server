@@ -80,6 +80,12 @@ public interface BaseMongoDbRepo<T> {
     void save(Collection<T> models);
 
     /**
+     * 批量保存，防止保存时超过内存限制
+     * @param
+     */
+    void saveBatch(List<T> list);
+
+    /**
      * update model
      * @param query
      * @param update

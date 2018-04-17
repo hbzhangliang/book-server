@@ -23,6 +23,7 @@ import java.util.List;
  */
 public abstract class BaseMongoDbRepoSupport<T extends BaseMongoDbModel> implements BaseMongoDbRepo<T> {
 
+    private int BatchLength=1000;
 //    private static final Logger log =
 //            LoggerFactory.getLogger(BaseMongoDbRepoSupport.class);
     @Autowired
@@ -149,6 +150,27 @@ public abstract class BaseMongoDbRepoSupport<T extends BaseMongoDbModel> impleme
         }
         else {
 //            log.warn("No Model To Save.");
+        }
+    }
+
+
+    @Override
+    public void saveBatch(List<T> list) {
+        if (list != null && !list.isEmpty()) {
+            if(list.size()>this.BatchLength){
+                int i=1;
+                while (i*this.BatchLength<list.size()){
+                    List<T> tmp=list.subList(this.BatchLength*(i-1),this.BatchLength*i);
+                    this.save(tmp);
+                    i++;
+                }
+                List<T> tmp=list.subList(this.BatchLength*(i-1),list.size());
+                this.save(tmp);
+            }
+            else {
+                this.save(list);
+            }
+
         }
     }
 

@@ -29,24 +29,10 @@ public abstract class BaseMongoDbModel implements Serializable{
 	@LastModifiedDate
 	protected Date dateUpdated;
 
-	@Indexed
-	protected String corpId;
 
 	private String status;
 
 	private Boolean flag;
-	/**
-	 * @return the corpId
-	 */
-	public String getCorpId() {
-		return corpId;
-	}
-	/**
-	 * @param corpId the corpId to set
-	 */
-	public void setCorpId(String corpId) {
-		this.corpId = corpId;
-	}
 
 	public String getStatus() {
 		return status;

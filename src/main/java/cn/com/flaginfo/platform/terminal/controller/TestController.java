@@ -1,14 +1,16 @@
 package cn.com.flaginfo.platform.terminal.controller;
 
+import cn.com.flaginfo.platform.terminal.mongo.models.Author;
 import cn.com.flaginfo.platform.terminal.mongo.models.Tmp;
+import cn.com.flaginfo.platform.terminal.mongo.repo.AuthorRepo;
 import cn.com.flaginfo.platform.terminal.mongo.repo.TmpRepo;
 import cn.com.flaginfo.platform.terminal.mysql.entity.CoreUser;
 import cn.com.flaginfo.platform.terminal.mysql.entity.CoreUserExample;
 import cn.com.flaginfo.platform.terminal.mysql.mapper.CoreUserMapper;
+import cn.com.flaginfo.platform.terminal.services.AuthApi;
+import cn.com.flaginfo.platform.terminal.services.AuthorApi;
 import cn.com.flaginfo.platform.terminal.services.TryApi;
-import cn.com.flaginfo.platform.terminal.utils.CookieUtils;
-import cn.com.flaginfo.platform.terminal.utils.PlatformHelper;
-import cn.com.flaginfo.platform.terminal.utils.RedisUtils;
+import cn.com.flaginfo.platform.terminal.utils.*;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Future;
 
 /**
@@ -94,8 +93,17 @@ public class TestController {
 
 
 
+    @RequestMapping(value = "/author")
+    @ResponseBody
+    public Object author() {
+        authorApi.generateAuthor();
+        return null;
+    }
 
 
+
+    @Autowired
+    private AuthorApi authorApi;
 
 //    @RequestMapping(value = "/6")
 //    public ModelAndView test6() {
