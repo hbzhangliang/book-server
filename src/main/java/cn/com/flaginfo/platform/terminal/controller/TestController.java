@@ -101,6 +101,14 @@ public class TestController {
     }
 
 
+    @RequestMapping(value = "/authorfilter")
+    @ResponseBody
+    public Object authorFilter() {
+        authorApi.filterAuthor();
+        return null;
+    }
+
+
 
     @Autowired
     private AuthorApi authorApi;

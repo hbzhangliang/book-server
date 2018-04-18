@@ -88,6 +88,42 @@ public class AuthorApiImpl implements AuthorApi {
     }
 
 
+    /**
+     * 总计962 条
+     * 三类
+     * /files/    953条
+     * /author/    4条
+     * /zj/    4条
+     * /hmtl/   唐家三少    1条
+     */
+    @Override
+    public void filterAuthor() {
+        List<Author> list=authorRepo.list();
+        List<Author> filesList=new ArrayList<>(1000);
+        List<Author>  authorList=new ArrayList<>(10);
+        List<Author> zjList=new ArrayList<>(10);
+        List<Author> otherList=new ArrayList<>(10);
+        for(Author item:list){
+            String url=item.getUrl().toLowerCase();
+            if(url.indexOf("files")>-1){
+                filesList.add(item);
+            }
+            else if(url.indexOf("author")>-1){
+                authorList.add(item);
+            }
+            else if(url.indexOf("zj")>-1){
+                zjList.add(item);
+            }else {
+                otherList.add(item);
+            }
+        }
+
+        log.info("contains auth [{}]",JSON.toJSONString(authorList));
+
+        log.info("contains zj [{}]",JSON.toJSONString(zjList));
+
+        log.info("contains others  [{}]",JSON.toJSONString(otherList));
+    }
 
     @Autowired
     private AuthorRepo authorRepo;

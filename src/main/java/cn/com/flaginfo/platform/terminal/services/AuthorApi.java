@@ -5,4 +5,7 @@ public interface AuthorApi {
 
     void generateAuthor();
 
+
+    void filterAuthor();
+
 }
