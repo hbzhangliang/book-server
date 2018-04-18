@@ -1,5 +1,9 @@
 package cn.com.flaginfo.platform.terminal.test;
 
+import cn.com.flaginfo.platform.terminal.controller.TestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -9,6 +13,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class AsyncThread {
+
+    private static final Logger log = LoggerFactory.getLogger(AsyncThread.class);
 
     public static void main(String[] args) {
         AsyncThread t = new AsyncThread();
@@ -41,7 +47,7 @@ public class AsyncThread {
     public void doOtherThings() {
         try {
             for (int i = 0; i < 3; i++) {
-                System.out.println("do thing no:" + i);
+                log.info("do thing no:" + i);
                 Thread.sleep(1000 * (new Random().nextInt(10)));
             }
         } catch (InterruptedException e) {
