@@ -1,32 +1,21 @@
 package cn.com.flaginfo.platform.terminal.controller;
 
-import cn.com.flaginfo.platform.terminal.mongo.models.Author;
 import cn.com.flaginfo.platform.terminal.mongo.models.Tmp;
-import cn.com.flaginfo.platform.terminal.mongo.repo.AuthorRepo;
 import cn.com.flaginfo.platform.terminal.mongo.repo.TmpRepo;
 import cn.com.flaginfo.platform.terminal.mysql.entity.CoreUser;
-import cn.com.flaginfo.platform.terminal.mysql.entity.CoreUserExample;
 import cn.com.flaginfo.platform.terminal.mysql.mapper.CoreUserMapper;
-import cn.com.flaginfo.platform.terminal.services.AuthApi;
 import cn.com.flaginfo.platform.terminal.services.AuthorApi;
-import cn.com.flaginfo.platform.terminal.services.TryApi;
 import cn.com.flaginfo.platform.terminal.utils.*;
-import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletResponse;
-import java.text.DecimalFormat;
 import java.util.*;
-import java.util.concurrent.Future;
 
 /**
  * Created by liang_zhang on 2017/9/25.
@@ -220,8 +209,6 @@ public class TestController {
 //        return redisUtils.getObj(key);
 //    }
 
-    @Autowired
-    private TryApi tryApi;
 
     @Autowired
     private PlatformHelper platformHelper;

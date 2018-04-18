@@ -25,7 +25,7 @@ public class BaseAspect {
     }
 
 
-    @Pointcut("execution(* cn.com.flaginfo.platform.terminal.controller.UserController.*(..))")
+    @Pointcut("execution(* cn.com.flaginfo.platform.terminal.controller.TestController.*(..))")
     public void pointcut(){
     }
 
