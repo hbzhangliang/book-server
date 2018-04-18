@@ -161,4 +161,42 @@ public class HtmlUtils {
 
 
 
+    //when i=3时
+    public static List<Map<String,String>>  getAuthListADD(String content){
+        String p="<p><a";
+        String q="</a></p>";
+//        String startPs=content.indexOf(p);
+
+        content=content.toLowerCase();
+        if(StringUtils.isEmpty(content)) return null;
+        List<Map<String,String>> list=new ArrayList<>(200);
+
+        int startPosition=content.indexOf(p)+3,endPosition=content.indexOf(q)+4;
+        while (startPosition!=-1&&endPosition!=-1&&startPosition<endPosition) {
+            String tmp = content.substring(startPosition, endPosition);
+            log.info(tmp);
+            int pp=tmp.indexOf("\"")+1;
+            int qq=tmp.indexOf("\"",pp);
+            if(pp==0||qq==-1||pp>qq) break;
+            Map<String,String> map=new HashMap<>(2);
+            String url=tmp.substring(pp,qq);
+            if(url.indexOf("html")==-1){
+                break;
+            }
+            map.put("url",url);
+            pp=tmp.indexOf(">")+1;
+            qq=tmp.indexOf("<",pp);
+            map.put("name",tmp.substring(pp,qq));
+
+            content = content.substring(endPosition);
+            startPosition = content.indexOf(p) + 3;
+            endPosition = content.indexOf(q) + 4;
+
+            list.add(map);
+        }
+        return list;
+    }
+
+
+
 }
